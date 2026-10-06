@@ -1,3 +1,4 @@
+// Class .sv files (including seq_lib) are included once by their package.
 +incdir+tb/common
 +incdir+tb/uart
 tb/common/apb_if.sv
