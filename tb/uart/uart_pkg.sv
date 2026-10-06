@@ -8,15 +8,15 @@ package uart_pkg;
     A_STATUS='h10,A_IRQ_EN='h14,A_IRQ_STATUS='h18,A_ERR_CLEAR='h1c;
 
   // Register model (dependency order).
-  `include "uart_ctrl_reg.sv"
-  `include "uart_baud_reg.sv"
-  `include "uart_tx_reg.sv"
-  `include "uart_rx_reg.sv"
-  `include "uart_status_reg.sv"
-  `include "uart_irq_en_reg.sv"
-  `include "uart_irq_status_reg.sv"
-  `include "uart_err_clear_reg.sv"
-  `include "uart_reg_block.sv"
+  `include "ral/uart_ctrl_reg.sv"
+  `include "ral/uart_baud_reg.sv"
+  `include "ral/uart_tx_reg.sv"
+  `include "ral/uart_rx_reg.sv"
+  `include "ral/uart_status_reg.sv"
+  `include "ral/uart_irq_en_reg.sv"
+  `include "ral/uart_irq_status_reg.sv"
+  `include "ral/uart_err_clear_reg.sv"
+  `include "ral/uart_reg_block.sv"
 
   // Serial agent (dependency order).
   `include "uart_item.sv"
@@ -48,12 +48,12 @@ package uart_pkg;
   `include "seq_lib/uart_reset_vseq.sv"
 
   // Tests (dependency order).
-  `include "uart_base_test.sv"
-  `include "uart_smoke_test.sv"
-  `include "uart_ral_test.sv"
-  `include "uart_formats_test.sv"
-  `include "uart_random_test.sv"
-  `include "uart_errors_test.sv"
-  `include "uart_fifo_test.sv"
-  `include "uart_reset_test.sv"
+  `include "tests/uart_base_test.sv"
+  `include "tests/uart_smoke_test.sv"
+  `include "tests/uart_ral_test.sv"
+  `include "tests/uart_formats_test.sv"
+  `include "tests/uart_random_test.sv"
+  `include "tests/uart_errors_test.sv"
+  `include "tests/uart_fifo_test.sv"
+  `include "tests/uart_reset_test.sv"
 endpackage
