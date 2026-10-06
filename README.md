@@ -1,32 +1,85 @@
-# Generic UVM learning foundation — v1.0-generic
+# UART UVM learning repository
 
-This is a runnable UVM 1.2 foundation with an APB3 agent, adapter, explicit
-RAL predictor, base environment, virtual sequencer, reusable ordered comparator,
-functional bus coverage, interface assertions and a scratch-register demo.
+Two real Git versions, an original UART peripheral, and an end-to-end UVM 1.2
+environment. VCS is the default simulator; Questa is selectable.
 
-Run `make` (VCS default) or `make SIM=questa UVM_HOME=/path/to/uvm-1.2`.
-Both commands run `generic_smoke_test`. Requires licensed simulator executables
-on PATH; UVM itself is not vendored. Questa uses source UVM with `UVM_NO_DPI`
-for this example, which uses no DPI-dependent features.
+## Start here
 
-## What generic means
-The UVM lifecycle, APB agent, RAL integration, logging and build flow are reused.
-No testbench can verify arbitrary IP without knowing its specification. Replace
-the bus agent for AXI/AHB/etc., supply a register block, add functional protocol
-agents and a reference model. Derive from `base_env` and override
-`create_register_model()`; override `create_virtual_sequencer()` to add handles.
-`demo_env` shows the minimum working integration. The comparator is a reusable
-extension point; it is not connected in the register-only demo, whose RAL mirror
-checks supply the checking.
+```sh
+make                                      # UART smoke, VCS, seed 1
+make TEST=uart_formats_test
+make TEST=uart_random_test SEED=23 PLUSARGS="+N_FRAMES=200"
+make regression                           # seven tests × three seeds
+make coverage                             # VCS URG report
+make SIM=questa UVM_HOME=/tools/uvm-1.2
+make regression SIM=questa UVM_HOME=/tools/uvm-1.2
+make coverage SIM=questa
+make SUITE=generic                        # original register-only example
+```
 
-Read code in this order: interface → item → monitor → driver → agent → adapter
-→ demo register block → base environment → demo test → top. Driver requests
-never directly feed a functional scoreboard: monitor observations must do that.
-See the next Git tag, `v2.0-uart`, for a complete peripheral specialization.
+Linux, GNU Make, Python 3 and licensed VCS or Questa executables on PATH are
+required for these commands. `UVM_HOME` means the directory containing `src/`.
+VCS uses bundled UVM 1.2. Questa compiles your UVM 1.2 source with `UVM_NO_DPI`;
+this example needs no backdoor, DPI regex or DPI command-line services.
+UVM's fallback still supports `+UVM_TESTNAME` and `+UVM_VERBOSITY`, and the
+custom `+N_FRAMES` uses `$value$plusargs`. Do not assume all UVM command-line
+factory/configuration switches work in this no-DPI mode.
 
-## References
-- Accellera UVM 1.2 user guide: https://www.accellera.org/images/downloads/standards/uvm/uvm_users_guide_1.2.pdf
-- Arm APB specification: https://documentation-service.arm.com/static/60d5b617677cf7536a55c273
+The repository does not include a third-party UVM library. Obtain it from
+https://www.accellera.org/downloads/standards/uvm .
 
-Original example code is MIT licensed. Commercial simulator execution has not
-been performed in the authoring environment; validate with your installed tools.
+## What's included
+
+- Reusable APB3 item, sequencer, driver, monitor, active/passive agent, coverage,
+  timeout handling, adapter and observed-transaction RAL predictor.
+- Generic base environment, virtual sequencer, test and ordered comparator.
+- Runnable generic scratch-register example.
+- Synthesizable teaching UART: APB register interface, 8-bit full-duplex data,
+  programmable clocks per bit, no/even/odd parity, one/two stop bits, four-byte
+  RX FIFO, sticky parity/framing/overrun flags, write-one-to-clear and IRQ masks.
+- Named-field RAL model for eight registers; frontdoor write/read/mirror/update
+  examples, with volatility and FIFO side effects treated explicitly.
+- Active serial RX driver, independent RX/TX monitor, reset abort handling,
+  observed-bus configuration tracking and virtual sequences.
+- Architectural scoreboard, frame/register functional coverage, APB assertions,
+  seven directed/random UVM tests and reproducible regression seeds.
+- Supplemental plain-SystemVerilog RTL test and Python static-compile helper.
+
+This is a substantial learning/reference implementation, not a claim of
+production verification closure or a drop-in verifier for every UART. Read
+[scope and limitations](docs/06_scope.md), especially the receive-commit timing
+window and the fixed four-entry scoreboard model.
+
+## Learn in order
+
+1. [Architecture and UVM concepts](docs/01_learning_guide.md)
+2. [UART register and timing specification](docs/02_uart_spec.md)
+3. [RAL walkthrough](docs/03_ral_walkthrough.md)
+4. [Verification plan and coverage](docs/04_verification_plan.md)
+5. [Simulator commands and debugging](docs/05_running.md)
+6. [Reuse boundaries and extension exercises](docs/06_scope.md)
+7. [Actual validation evidence](docs/VALIDATION.md)
+
+## Two Git versions
+
+| Tag | Content |
+| --- | --- |
+| `v1.0-generic` | Reusable foundation plus runnable scratch-register demo |
+| `v2.0-uart` | UART RTL, complete specialization, tests and learning guide |
+
+The downloadable ZIP contains the current source tree and a Git bundle in
+`history/uart-uvm.bundle`. To restore a normal repository with both tags:
+
+```sh
+git clone history/uart-uvm.bundle ../uart-uvm-git
+cd ../uart-uvm-git
+git log --oneline --decorate
+git diff v1.0-generic..v2.0-uart --stat
+git switch --detach v1.0-generic
+make                                  # generic demo in version 1
+git switch main                       # return to UART version
+```
+
+If you already have this as a Git clone, skip the bundle step. No GitHub remote
+or publication is configured. All project-owned source is original and MIT
+licensed; the UART is intentionally small enough to read in one sitting.
