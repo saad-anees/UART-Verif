@@ -69,3 +69,21 @@ make -C /tmp/uart-uvm-obj -f Vtb_top.mk -j 4 \
 No UVM or simulator source was modified. Coverage remained unsupported in that
 supplementary run. VCS and Questa are the intended paths for the full regression
 and coverage reports.
+
+
+## Class-per-file refactor — 2026-10-06
+
+- All 55 project classes are explicit, unique, and in matching class-named files.
+- All project package includes resolve. Both packages contain assembly only.
+- The 47 moved class bodies preserve all non-comment SystemVerilog tokens;
+  `uart_base_test` is copied unchanged, and seven macro-generated tests are
+  expanded into equivalent explicit classes with the same factory registrations
+  and sequence selection.
+- Generic and UART semantic compilation with pyslang 12.0.0 and Accellera UVM 1.2
+  both pass with **zero errors**. The two warnings in each compilation come from
+  the unchanged upstream UVM resource and sequencer loops.
+- Evidence: [generic compile](evidence/refactor-generic-static.log) and
+  [UART compile](evidence/refactor-uart-static.log).
+- The Makefile and simulator file lists reference the renamed top-level files.
+  Runtime simulation was not repeated for this source-organization refactor;
+  the behavioral results above describe the original published version.
