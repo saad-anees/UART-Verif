@@ -12,12 +12,12 @@ package common_pkg;
   `include "apb_monitor.sv"
   `include "apb_coverage.sv"
   `include "apb_agent.sv"
-  `include "apb_reg_adapter.sv"
+  `include "ral/apb_reg_adapter.sv"
   `include "seq_lib/apb_access_seq.sv"
 
   // Reusable environment and test components (dependency order).
   `include "ordered_scoreboard.sv"
   `include "base_virtual_sequencer.sv"
   `include "base_env.sv"
-  `include "base_test.sv"
+  `include "tests/base_test.sv"
 endpackage
