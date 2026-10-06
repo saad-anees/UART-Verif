@@ -1,0 +1,63 @@
+SHELL := /bin/bash
+.SHELLFLAGS := -eu -o pipefail -c
+SIM ?= vcs
+SUITE ?= generic
+TEST ?= generic_smoke_test
+SEED ?= 1
+COV ?= 1
+GUI ?= 0
+UVM_HOME ?=
+VCS ?= vcs
+VLOG ?= vlog
+VSIM ?= vsim
+VLIB ?= vlib
+VCS_FLAGS ?=
+VLOG_FLAGS ?=
+VSIM_FLAGS ?=
+PLUSARGS ?=
+TOP := $(if $(filter generic,$(SUITE)),demo_top,tb_top)
+ROOT := $(CURDIR)
+BUILD := $(ROOT)/build/$(SIM)/$(SUITE)
+RUN := $(BUILD)/$(TEST)_seed$(SEED)
+ifeq ($(filter $(SIM),vcs questa),)
+$(error SIM must be vcs or questa)
+endif
+ifeq ($(filter $(SUITE),generic uart),)
+$(error SUITE must be generic or uart)
+endif
+VCS_COV := $(if $(filter 1,$(COV)),-cm line+cond+tgl+branch+assert,)
+QUESTA_COV := $(if $(filter 1,$(COV)),+cover=bcesft,)
+.PHONY: all compile run regression clean help coverage
+all: run
+help:
+	@echo 'make [SIM=vcs|questa] [SUITE=generic|uart] [TEST=name] [SEED=1] [COV=1]'
+	@echo 'VCS uses bundled UVM 1.2. Questa requires UVM_HOME pointing at UVM 1.2.'
+	@echo 'Run make regression for the selected suite; make coverage merges results.'
+compile:
+	@mkdir -p $(BUILD)
+ifeq ($(SIM),vcs)
+	$(VCS) -full64 -sverilog -ntb_opts uvm-1.2 -timescale=1ns/1ps 	  -f sim/$(SUITE).f -top $(TOP) -Mdir=$(BUILD)/csrc -o $(BUILD)/simv 	  $(VCS_COV) -debug_access+all $(VCS_FLAGS) -l $(BUILD)/compile.log
+else
+	@test -f "$(UVM_HOME)/src/uvm_pkg.sv" || { echo 'Set UVM_HOME to UVM 1.2 root'; exit 2; }
+	$(VLIB) $(BUILD)/work
+	$(VLOG) -sv -work $(BUILD)/work +define+UVM_NO_DPI +incdir+$(UVM_HOME)/src 	  $(UVM_HOME)/src/uvm_pkg.sv -f sim/$(SUITE).f $(QUESTA_COV) 	  $(VLOG_FLAGS) -l $(BUILD)/compile.log
+endif
+run: compile
+	@mkdir -p $(RUN)
+ifeq ($(SIM),vcs)
+	cd $(RUN) && $(BUILD)/simv +UVM_TESTNAME=$(TEST) +ntb_random_seed=$(SEED) 	  $(VCS_COV) -cm_dir $(RUN)/coverage.vdb $(PLUSARGS) -l run.log
+else
+	cd $(RUN) && $(VSIM) $(if $(filter 1,$(GUI)),-gui,-c) 	  -lib $(BUILD)/work $(TOP) -sv_seed $(SEED) $(if $(filter 1,$(COV)),-coverage,) 	  +UVM_TESTNAME=$(TEST) $(PLUSARGS) $(VSIM_FLAGS) 	  -do 'onerror {quit -code 1}; $(if $(filter 1,$(COV)),coverage save -onexit coverage.ucdb;) run -all; quit -f' 	  -l run.log
+endif
+	python3 scripts/check_log.py $(RUN)/run.log
+regression:
+	$(MAKE) run SIM=$(SIM) SUITE=$(SUITE) TEST=generic_smoke_test SEED=$(SEED)
+coverage:
+ifeq ($(SIM),vcs)
+	urg -dir $(BUILD)/*/coverage.vdb -report $(BUILD)/coverage_report
+else
+	vcover merge $(BUILD)/merged.ucdb $(BUILD)/*/coverage.ucdb
+	vcover report -details $(BUILD)/merged.ucdb > $(BUILD)/coverage.txt
+endif
+clean:
+	rm -rf build
