@@ -2,7 +2,7 @@
 
 Every project class has its own `.sv` file named exactly after the class. For
 example, `uart_driver` is in `tb/uart/uart_driver.sv`, and `uart_ctrl_reg` is in
-`tb/uart/uart_ctrl_reg.sv`. The seven UART scenario tests are explicit classes;
+`tb/uart/ral/uart_ctrl_reg.sv`. The seven UART scenario tests are explicit classes;
 there is no test-generation macro to expand while debugging.
 
 The `.sv` package files contain imports, constants and ordered includes only.
@@ -19,6 +19,20 @@ before tests. Editing a class does not require editing the file list.
 
 Package includes use `seq_lib/<class_name>.sv`. Sequencers remain with the
 agents/environment because they are components rather than stimulus sequences.
+
+## Register models and tests
+
+| Directory | Contents |
+| --- | --- |
+| `tb/common/ral/` | Reusable APB register adapter |
+| `tb/demo/ral/` | Scratch register class and demo register block |
+| `tb/uart/ral/` | Eight UART register classes and UART register block |
+| `tb/common/tests/` | Reusable base test |
+| `tb/demo/tests/` | Generic smoke test |
+| `tb/uart/tests/` | UART base test and seven scenario tests |
+
+RAL programming sequences stay in `seq_lib/`; they use the models in `ral/`.
+Package includes preserve dependency order across these directories.
 
 ## Testbench module filenames
 
@@ -43,12 +57,12 @@ Package: [`common_pkg.sv`](../tb/common/common_pkg.sv).
 | [`apb_monitor.sv`](../tb/common/apb_monitor.sv) | `uvm_monitor` |
 | [`apb_coverage.sv`](../tb/common/apb_coverage.sv) | `uvm_subscriber` |
 | [`apb_agent.sv`](../tb/common/apb_agent.sv) | `uvm_agent` |
-| [`apb_reg_adapter.sv`](../tb/common/apb_reg_adapter.sv) | `uvm_reg_adapter` |
+| [`apb_reg_adapter.sv`](../tb/common/ral/apb_reg_adapter.sv) | `uvm_reg_adapter` |
 | [`apb_access_seq.sv`](../tb/common/seq_lib/apb_access_seq.sv) | `uvm_sequence` |
 | [`ordered_scoreboard.sv`](../tb/common/ordered_scoreboard.sv) | `uvm_scoreboard` |
 | [`base_virtual_sequencer.sv`](../tb/common/base_virtual_sequencer.sv) | `uvm_sequencer` |
 | [`base_env.sv`](../tb/common/base_env.sv) | `uvm_env` |
-| [`base_test.sv`](../tb/common/base_test.sv) | `uvm_test` |
+| [`base_test.sv`](../tb/common/tests/base_test.sv) | `uvm_test` |
 
 ## Generic demo
 
@@ -56,10 +70,10 @@ Package: [`demo_pkg.sv`](../tb/demo/demo_pkg.sv).
 
 | Class file | Base class |
 | --- | --- |
-| [`scratch_reg.sv`](../tb/demo/scratch_reg.sv) | `uvm_reg` |
-| [`demo_block.sv`](../tb/demo/demo_block.sv) | `uvm_reg_block` |
+| [`scratch_reg.sv`](../tb/demo/ral/scratch_reg.sv) | `uvm_reg` |
+| [`demo_block.sv`](../tb/demo/ral/demo_block.sv) | `uvm_reg_block` |
 | [`demo_env.sv`](../tb/demo/demo_env.sv) | `base_env` |
-| [`generic_smoke_test.sv`](../tb/demo/generic_smoke_test.sv) | `base_test` |
+| [`generic_smoke_test.sv`](../tb/demo/tests/generic_smoke_test.sv) | `base_test` |
 
 ## UART specialization
 
@@ -67,15 +81,15 @@ Package: [`uart_pkg.sv`](../tb/uart/uart_pkg.sv).
 
 | Class file | Base class |
 | --- | --- |
-| [`uart_ctrl_reg.sv`](../tb/uart/uart_ctrl_reg.sv) | `uvm_reg` |
-| [`uart_baud_reg.sv`](../tb/uart/uart_baud_reg.sv) | `uvm_reg` |
-| [`uart_tx_reg.sv`](../tb/uart/uart_tx_reg.sv) | `uvm_reg` |
-| [`uart_rx_reg.sv`](../tb/uart/uart_rx_reg.sv) | `uvm_reg` |
-| [`uart_status_reg.sv`](../tb/uart/uart_status_reg.sv) | `uvm_reg` |
-| [`uart_irq_en_reg.sv`](../tb/uart/uart_irq_en_reg.sv) | `uvm_reg` |
-| [`uart_irq_status_reg.sv`](../tb/uart/uart_irq_status_reg.sv) | `uvm_reg` |
-| [`uart_err_clear_reg.sv`](../tb/uart/uart_err_clear_reg.sv) | `uvm_reg` |
-| [`uart_reg_block.sv`](../tb/uart/uart_reg_block.sv) | `uvm_reg_block` |
+| [`uart_ctrl_reg.sv`](../tb/uart/ral/uart_ctrl_reg.sv) | `uvm_reg` |
+| [`uart_baud_reg.sv`](../tb/uart/ral/uart_baud_reg.sv) | `uvm_reg` |
+| [`uart_tx_reg.sv`](../tb/uart/ral/uart_tx_reg.sv) | `uvm_reg` |
+| [`uart_rx_reg.sv`](../tb/uart/ral/uart_rx_reg.sv) | `uvm_reg` |
+| [`uart_status_reg.sv`](../tb/uart/ral/uart_status_reg.sv) | `uvm_reg` |
+| [`uart_irq_en_reg.sv`](../tb/uart/ral/uart_irq_en_reg.sv) | `uvm_reg` |
+| [`uart_irq_status_reg.sv`](../tb/uart/ral/uart_irq_status_reg.sv) | `uvm_reg` |
+| [`uart_err_clear_reg.sv`](../tb/uart/ral/uart_err_clear_reg.sv) | `uvm_reg` |
+| [`uart_reg_block.sv`](../tb/uart/ral/uart_reg_block.sv) | `uvm_reg_block` |
 | [`uart_item.sv`](../tb/uart/uart_item.sv) | `uvm_sequence_item` |
 | [`uart_cfg.sv`](../tb/uart/uart_cfg.sv) | `uvm_object` |
 | [`uart_sequencer.sv`](../tb/uart/uart_sequencer.sv) | `uvm_sequencer` |
@@ -97,14 +111,14 @@ Package: [`uart_pkg.sv`](../tb/uart/uart_pkg.sv).
 | [`uart_errors_vseq.sv`](../tb/uart/seq_lib/uart_errors_vseq.sv) | `uart_base_vseq` |
 | [`uart_fifo_vseq.sv`](../tb/uart/seq_lib/uart_fifo_vseq.sv) | `uart_base_vseq` |
 | [`uart_reset_vseq.sv`](../tb/uart/seq_lib/uart_reset_vseq.sv) | `uart_base_vseq` |
-| [`uart_base_test.sv`](../tb/uart/uart_base_test.sv) | `base_test` |
-| [`uart_smoke_test.sv`](../tb/uart/uart_smoke_test.sv) | `uart_base_test` |
-| [`uart_ral_test.sv`](../tb/uart/uart_ral_test.sv) | `uart_base_test` |
-| [`uart_formats_test.sv`](../tb/uart/uart_formats_test.sv) | `uart_base_test` |
-| [`uart_random_test.sv`](../tb/uart/uart_random_test.sv) | `uart_base_test` |
-| [`uart_errors_test.sv`](../tb/uart/uart_errors_test.sv) | `uart_base_test` |
-| [`uart_fifo_test.sv`](../tb/uart/uart_fifo_test.sv) | `uart_base_test` |
-| [`uart_reset_test.sv`](../tb/uart/uart_reset_test.sv) | `uart_base_test` |
+| [`uart_base_test.sv`](../tb/uart/tests/uart_base_test.sv) | `base_test` |
+| [`uart_smoke_test.sv`](../tb/uart/tests/uart_smoke_test.sv) | `uart_base_test` |
+| [`uart_ral_test.sv`](../tb/uart/tests/uart_ral_test.sv) | `uart_base_test` |
+| [`uart_formats_test.sv`](../tb/uart/tests/uart_formats_test.sv) | `uart_base_test` |
+| [`uart_random_test.sv`](../tb/uart/tests/uart_random_test.sv) | `uart_base_test` |
+| [`uart_errors_test.sv`](../tb/uart/tests/uart_errors_test.sv) | `uart_base_test` |
+| [`uart_fifo_test.sv`](../tb/uart/tests/uart_fifo_test.sv) | `uart_base_test` |
+| [`uart_reset_test.sv`](../tb/uart/tests/uart_reset_test.sv) | `uart_base_test` |
 
 ## Version history
 

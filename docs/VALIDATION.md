@@ -102,3 +102,17 @@ Generic and UART semantic compilation both pass with zero errors and the same
 two upstream UVM warnings. Evidence: [generic](evidence/sv-layout-generic-static.log)
 and [UART](evidence/sv-layout-uart-static.log). Runtime simulation was not repeated
 for this filename and directory change.
+
+
+## Dedicated `ral/` and `tests/` directories — 2026-10-07
+
+Twelve register-model/adapter classes are now in `ral/`, and ten test classes
+are in `tests/`, under their common, demo or UART owner. All 22 moved files
+preserve their contents byte-for-byte. The project still has 55 unique classes
+in matching `.sv` files; package includes and file-map links all resolve.
+
+Both generic and UART semantic compilation pass with zero errors and the two
+unchanged upstream UVM warnings. Evidence: [generic](evidence/ral-tests-generic-static.log)
+and [UART](evidence/ral-tests-uart-static.log). Runtime simulation was not repeated
+for this directory-only change. Existing Makefile targets and simulator file
+lists still compile the packages, which include the relocated class units.
