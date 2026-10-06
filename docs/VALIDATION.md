@@ -87,3 +87,18 @@ and coverage reports.
 - The Makefile and simulator file lists reference the renamed top-level files.
   Runtime simulation was not repeated for this source-organization refactor;
   the behavioral results above describe the original published version.
+
+
+## `.sv` class files and `seq_lib` layout — 2026-10-07
+
+All 55 class files now use `.sv`; the reusable APB access sequence and nine UART
+sequences live in their respective `seq_lib` directories. All class file contents
+are byte-for-byte unchanged from the preceding class-per-file refactor. Package
+includes and the file map refer to the new paths, and no project class `.svh`
+files remain on `main`. The packages include the class `.sv` units exactly once;
+the simulator file lists continue to compile packages rather than duplicate units.
+
+Generic and UART semantic compilation both pass with zero errors and the same
+two upstream UVM warnings. Evidence: [generic](evidence/sv-layout-generic-static.log)
+and [UART](evidence/sv-layout-uart-static.log). Runtime simulation was not repeated
+for this filename and directory change.

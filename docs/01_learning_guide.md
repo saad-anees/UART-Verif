@@ -1,7 +1,7 @@
 # Learning UVM through this project
 
-Each class now has a matching file: open `uart_driver.svh` to read only the
-driver, or `uart_ctrl_reg.svh` to read only the control register model. Use the
+Each class now has a matching file: open `uart_driver.sv` to read only the
+driver, or `uart_ctrl_reg.sv` to read only the control register model. Use the
 [class file map](07_class_file_map.md) to navigate. Package files show the include
 order, and the supplied simulator file lists compile those packages.
 
