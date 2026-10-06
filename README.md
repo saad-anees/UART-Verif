@@ -1,6 +1,6 @@
 # UART UVM learning repository
 
-Two real Git versions, an original UART peripheral, and an end-to-end UVM 1.2
+An original UART peripheral and an end-to-end UVM 1.2
 environment. VCS is the default simulator; Questa is selectable.
 
 ## Start here
@@ -14,7 +14,6 @@ make coverage                             # VCS URG report
 make SIM=questa UVM_HOME=/tools/uvm-1.2
 make regression SIM=questa UVM_HOME=/tools/uvm-1.2
 make coverage SIM=questa
-make SUITE=generic                        # original register-only example
 ```
 
 Linux, GNU Make, Python 3 and licensed VCS or Questa executables on PATH are
@@ -30,7 +29,7 @@ https://www.accellera.org/downloads/standards/uvm .
 
 ## Source organization
 
-Each of the 55 project classes lives in its own class-named `.sv` file.
+Each of the 51 project classes lives in its own class-named `.sv` file.
 For example: `apb_driver.sv`, `uart_scoreboard.sv`, `uart_ctrl_reg.sv`,
 `uart_smoke_vseq.sv` and `uart_smoke_test.sv`. Package `.sv` files contain
 only imports, constants and includes in dependency order. See the
@@ -39,14 +38,17 @@ testbench module filenames. Compile the packages using the supplied file lists;
 Class `.sv` files are included by their package, not compiled twice as standalone units.
 Sequences live under `seq_lib/`. Register models and the APB RAL adapter live
 under `ral/`, and all test classes live under `tests/` within their owning
-`tb/common`, `tb/demo` or `tb/uart` directory.
+`dv/common` or `dv/uart` directory.
+
+All verification classes, packages and interfaces are under `dv/`.
+`tb/` contains only `uart_tb_top.sv` and `uart_rtl_smoke_tb.sv`.
+`rtl/` contains the programmable UART IP.
 
 ## What's included
 
 - Reusable APB3 item, sequencer, driver, monitor, active/passive agent, coverage,
   timeout handling, adapter and observed-transaction RAL predictor.
-- Generic base environment, virtual sequencer, test and ordered comparator.
-- Runnable generic scratch-register example.
+- Reusable base environment, virtual sequencer, test and ordered comparator.
 - Synthesizable teaching UART: APB register interface, 8-bit full-duplex data,
   programmable clocks per bit, no/even/odd parity, one/two stop bits, four-byte
   RX FIFO, sticky parity/framing/overrun flags, write-one-to-clear and IRQ masks.
@@ -73,28 +75,18 @@ window and the fixed four-entry scoreboard model.
 6. [Reuse boundaries and extension exercises](docs/06_scope.md)
 7. [Actual validation evidence](docs/VALIDATION.md)
 
-## Two Git versions
+## Repository layout
 
-| Tag | Content |
+| Path | Contents |
 | --- | --- |
-| `v1.0-generic` | Reusable foundation plus runnable scratch-register demo |
-| `v2.0-uart` | UART RTL, complete specialization, tests and learning guide |
+| `rtl/` | UART IP |
+| `dv/common/` | APB agent and reusable UVM support |
+| `dv/uart/` | UART agent, environment, scoreboard and coverage |
+| `dv/*/ral/` | Register model and adapter |
+| `dv/*/seq_lib/` | Stimulus and virtual sequences |
+| `dv/*/tests/` | Base and scenario tests |
+| `tb/` | UVM integration top and standalone RTL testbench |
+| `sim/uart.f` | UART compile order |
+| `docs/` | Learning guide, specification and validation evidence |
 
-The downloadable ZIP contains the current source tree and a Git bundle in
-`history/uart-uvm.bundle`. To restore a normal repository with both tags:
-
-```sh
-git clone history/uart-uvm.bundle ../uart-uvm-git
-cd ../uart-uvm-git
-git log --oneline --decorate
-git diff v1.0-generic..v2.0-uart --stat
-git switch --detach v1.0-generic
-make                                  # generic demo in version 1
-git switch main                       # return to UART version
-```
-
-Published at https://github.com/saad-anees/UART-Verif. If you clone this GitHub
-repository, both version tags are available directly. Browser publication creates
-several upload commits; `history/uart-uvm.bundle` preserves the original two-commit
-history and original tag objects. All project-owned source is original and MIT
-licensed; the UART is intentionally small enough to read in one sitting.
+All project-owned source is original and MIT licensed.
