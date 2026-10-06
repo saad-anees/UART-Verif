@@ -80,6 +80,8 @@ make                                  # generic demo in version 1
 git switch main                       # return to UART version
 ```
 
-If you already have this as a Git clone, skip the bundle step. No GitHub remote
-or publication is configured. All project-owned source is original and MIT
+Published at https://github.com/saad-anees/UART-Verif. If you clone this GitHub
+repository, both version tags are available directly. Browser publication creates
+several upload commits; `history/uart-uvm.bundle` preserves the original two-commit
+history and original tag objects. All project-owned source is original and MIT
 licensed; the UART is intentionally small enough to read in one sitting.
