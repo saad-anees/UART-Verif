@@ -4,7 +4,6 @@
 
 | Check | Result | Evidence |
 | --- | --- | --- |
-| Generic UVM + RTL semantic compile, pyslang 12.0.0 | PASS, zero errors | `evidence/generic-static.log` |
 | UART UVM + RTL semantic compile, pyslang 12.0.0 | PASS, zero errors | `evidence/uart-static.log` |
 | UART RTL behavioral simulation, Verilator 5.49 | PASS, 438 checks | `evidence/rtl-smoke.log` |
 | `uart_smoke_test` | PASS, TX 1 / RX 1 checked | `evidence/uart_smoke_test.log` |
@@ -38,8 +37,7 @@ other issues. Run `uart_random_test` under VCS/Questa before relying on it.
 ## Reproduce the portable checks
 
 ```sh
-python3 scripts/static_compile.py --uvm-home /path/to/uvm-1.2 --suite generic
-python3 scripts/static_compile.py --uvm-home /path/to/uvm-1.2 --suite uart
+python3 scripts/static_compile.py --uvm-home /path/to/uvm-1.2
 python3 scripts/test_log_checker.py
 make rtl-check VERILATOR=verilator
 ```
@@ -71,48 +69,16 @@ supplementary run. VCS and Questa are the intended paths for the full regression
 and coverage reports.
 
 
-## Class-per-file refactor — 2026-10-06
+## Current UART-only `dv/` layout — 2026-10-07
 
-- All 55 project classes are explicit, unique, and in matching class-named files.
-- All project package includes resolve. Both packages contain assembly only.
-- The 47 moved class bodies preserve all non-comment SystemVerilog tokens;
-  `uart_base_test` is copied unchanged, and seven macro-generated tests are
-  expanded into equivalent explicit classes with the same factory registrations
-  and sequence selection.
-- Generic and UART semantic compilation with pyslang 12.0.0 and Accellera UVM 1.2
-  both pass with **zero errors**. The two warnings in each compilation come from
-  the unchanged upstream UVM resource and sequencer loops.
-- Evidence: [generic compile](evidence/refactor-generic-static.log) and
-  [UART compile](evidence/refactor-uart-static.log).
-- The Makefile and simulator file lists reference the renamed top-level files.
-  Runtime simulation was not repeated for this source-organization refactor;
-  the behavioral results above describe the original published version.
+All 51 UART-related UVM classes and both interfaces live under `dv/`; `tb/`
+contains only the UVM integration top and standalone UART RTL testbench.
+Register models, sequences and tests retain dedicated `ral/`, `seq_lib/` and
+`tests/` directories. The demo sources, generic build and history bundle directory
+were removed. Retained class bodies are unchanged. Package and documentation
+links resolve and the UART-only Makefile commands were checked with `make -n`.
 
-
-## `.sv` class files and `seq_lib` layout — 2026-10-07
-
-All 55 class files now use `.sv`; the reusable APB access sequence and nine UART
-sequences live in their respective `seq_lib` directories. All class file contents
-are byte-for-byte unchanged from the preceding class-per-file refactor. Package
-includes and the file map refer to the new paths, and no project class `.svh`
-files remain on `main`. The packages include the class `.sv` units exactly once;
-the simulator file lists continue to compile packages rather than duplicate units.
-
-Generic and UART semantic compilation both pass with zero errors and the same
-two upstream UVM warnings. Evidence: [generic](evidence/sv-layout-generic-static.log)
-and [UART](evidence/sv-layout-uart-static.log). Runtime simulation was not repeated
-for this filename and directory change.
-
-
-## Dedicated `ral/` and `tests/` directories — 2026-10-07
-
-Twelve register-model/adapter classes are now in `ral/`, and ten test classes
-are in `tests/`, under their common, demo or UART owner. All 22 moved files
-preserve their contents byte-for-byte. The project still has 55 unique classes
-in matching `.sv` files; package includes and file-map links all resolve.
-
-Both generic and UART semantic compilation pass with zero errors and the two
-unchanged upstream UVM warnings. Evidence: [generic](evidence/ral-tests-generic-static.log)
-and [UART](evidence/ral-tests-uart-static.log). Runtime simulation was not repeated
-for this directory-only change. Existing Makefile targets and simulator file
-lists still compile the packages, which include the relocated class units.
+Current semantic compilation passes with zero errors and two upstream UVM
+warnings: [compile log](evidence/dv-uart-static.log). Runtime simulation was not
+repeated for this layout change. The behavioral results above describe earlier
+runs of the same UART RTL and verification logic; older logs may show former paths.

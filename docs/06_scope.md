@@ -1,12 +1,10 @@
 # Reuse boundaries and known limitations
 
-## What is generic
+## Reusable UART verification support
 
-`tb/common` contains IP-independent UVM structure and an APB-specific transport.
-The v1 register demo proves that the base does not depend on UART behavior. It is
-not a universal protocol engine: AXI, PCIe, SPI and other IP need appropriate
-agents, register maps and reference models. The generic ordered comparator is
-provided as an extension point; the UART uses a specialized queue/state checker.
+`dv/common` contains reusable UVM structure and an APB transport. Other IP
+requires suitable protocol agents, register maps and reference models. The
+ordered comparator is an extension point; UART uses a specialized queue/state checker.
 
 For another APB peripheral, derive from `base_env`, override the RAL model
 factory method, create a typed virtual sequencer and connect functional

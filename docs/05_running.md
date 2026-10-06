@@ -1,7 +1,7 @@
 # Building, running and debugging
 
 Run all commands from the repository root. The current tree defaults to the
-UART suite. The v1 tag defaults to the generic suite.
+UART testbench. Verification sources live in `dv/`, and testbench tops in `tb/`.
 
 ## VCS
 
@@ -42,19 +42,18 @@ use the tool's waveform UI. `-voptargs=+acc` may be useful in `VSIM_FLAGS`.
 
 ## Outputs and regression behavior
 
-Outputs live under `build/<sim>/<suite>/<test>_seed<seed>/`. Each run has a log
+Outputs live under `build/<sim>/uart/<test>_seed<seed>/`. Each run has a log
 and its own coverage database. A repeated identical test/seed reuses that path;
 copy results before re-running if you need both. Regression is sequential and
 stops at the first failed command. It recompiles for each test for simplicity;
 large projects should cache builds and separate build/run scheduling.
 
-Do not run parallel Make jobs into the same suite build directory. `make clean`
+Do not run parallel Make jobs into the same UART build directory. `make clean`
 removes only the repository's generated `build/` directory.
 
 ```sh
 make -n run                         # inspect commands without simulator
 make help
-make SUITE=generic
 make COV=0
 ```
 
@@ -62,8 +61,7 @@ make COV=0
 
 ```sh
 python3 -m pip install pyslang
-python3 scripts/static_compile.py --uvm-home /tools/uvm-1.2 --suite uart
-python3 scripts/static_compile.py --uvm-home /tools/uvm-1.2 --suite generic
+python3 scripts/static_compile.py --uvm-home /tools/uvm-1.2
 make rtl-check VERILATOR=verilator
 ```
 

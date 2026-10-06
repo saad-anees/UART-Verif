@@ -13,8 +13,9 @@ it, expose it through RXDATA and report errors/interrupts correctly. These are
 observable promises, so the checker should use external interfaces rather than
 copying internal RTL state.
 
-The register-only v1 example teaches the transport and RAL layers first. The
-v2 example keeps those files and derives `uart_env` from `base_env`.
+The APB/RAL transport lives in `dv/common`. The UART specialization in
+`dv/uart` derives `uart_env` from `base_env`; the module in `tb/uart_tb_top.sv`
+instantiates the hardware and connects interfaces.
 
 ## 2. Structural hierarchy
 
