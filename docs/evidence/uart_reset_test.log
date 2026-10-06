@@ -1,0 +1,107 @@
+UVM_INFO <UVM_HOME>/src/base/uvm_root.svh(392) @ 0: reporter [UVM/RELNOTES] 
+----------------------------------------------------------------
+UVM-1.2
+(C) 2007-2014 Mentor Graphics Corporation
+(C) 2007-2014 Cadence Design Systems, Inc.
+(C) 2006-2014 Synopsys, Inc.
+(C) 2011-2013 Cypress Semiconductor Corp.
+(C) 2013-2014 NVIDIA Corporation
+----------------------------------------------------------------
+
+  ***********       IMPORTANT RELEASE NOTES         ************
+
+  You are using a version of the UVM library that has been compiled
+  with `UVM_NO_DEPRECATED undefined.
+  See http://www.eda.org/svdb/view.php?id=3313 for more details.
+
+  You are using a version of the UVM library that has been compiled
+  with `UVM_OBJECT_DO_NOT_NEED_CONSTRUCTOR undefined.
+  See http://www.eda.org/svdb/view.php?id=3770 for more details.
+
+      (Specify +UVM_NO_RELNOTES to turn off this notice)
+
+UVM_INFO <UVM_HOME>/src/base/uvm_root.svh(453) @ 0: reporter [NO_DPI_TSTNAME] UVM_NO_DPI defined--getting UVM_TESTNAME directly, without DPI
+UVM_INFO @ 0: reporter [RNTST] Running test uart_reset_test...
+UVM_INFO <UVM_HOME>/src/base/uvm_root.svh(579) @ 0: reporter [UVMTOP] UVM testbench topology:
+---------------------------------------------------------------------
+Name                       Type                           Size  Value
+---------------------------------------------------------------------
+uvm_test_top               uart_reset_test                -     @349 
+  env                      uart_env                       -     @362 
+    bus                    apb_agent                      -     @377 
+      cov                  apb_coverage                   -     @719 
+        analysis_imp       uvm_analysis_imp               -     @728 
+      drv                  apb_driver                     -     @875 
+        rsp_port           uvm_analysis_port              -     @894 
+        seq_item_port      uvm_seq_item_pull_port         -     @884 
+      mon                  apb_monitor                    -     @700 
+        ap                 uvm_analysis_port              -     @709 
+      sqr                  apb_sequencer                  -     @738 
+        rsp_export         uvm_analysis_export            -     @747 
+        seq_item_export    uvm_seq_item_pull_imp          -     @865 
+        arbitration_queue  array                          0     -    
+        lock_queue         array                          0     -    
+        num_last_reqs      integral                       32    'd1  
+        num_last_rsps      integral                       32    'd1  
+    cov                    uart_coverage                  -     @639 
+      analysis_imp         uvm_analysis_imp               -     @648 
+    predictor              uvm_reg_predictor #(apb_item)  -     @387 
+      bus_in               uvm_analysis_imp               -     @400 
+      reg_ap               uvm_analysis_port              -     @410 
+    reg_cov                uart_reg_coverage              -     @658 
+      analysis_imp         uvm_analysis_imp               -     @667 
+    sb                     uart_scoreboard                -     @610 
+      bus_in               uvm_analysis_imp_bus           -     @619 
+      serial_in            uvm_analysis_imp_serial        -     @629 
+    serial                 uart_agent                     -     @601 
+      drv                  uart_driver                    -     @1070
+        rsp_port           uvm_analysis_port              -     @1089
+        seq_item_port      uvm_seq_item_pull_port         -     @1079
+      mon                  uart_monitor                   -     @914 
+        ap                 uvm_analysis_port              -     @923 
+      sqr                  uart_sequencer                 -     @933 
+        rsp_export         uvm_analysis_export            -     @942 
+        seq_item_export    uvm_seq_item_pull_imp          -     @1060
+        arbitration_queue  array                          0     -    
+        lock_queue         array                          0     -    
+        num_last_reqs      integral                       32    'd1  
+        num_last_rsps      integral                       32    'd1  
+    tracker                uart_config_tracker            -     @677 
+      analysis_imp         uvm_analysis_imp               -     @686 
+    vsqr                   uart_virtual_sequencer         -     @459 
+      rsp_export           uvm_analysis_export            -     @468 
+      seq_item_export      uvm_seq_item_pull_imp          -     @586 
+      arbitration_queue    array                          0     -    
+      lock_queue           array                          0     -    
+      num_last_reqs        integral                       32    'd1  
+      num_last_rsps        integral                       32    'd1  
+---------------------------------------------------------------------
+
+UVM_INFO <UVM_HOME>/src/base/uvm_traversal.svh(279) @ 0: reporter [UVM/COMP/NAMECHECK] This implementation of the component name checks requires DPI to be enabled
+UVM_INFO <UVM_HOME>/src/base/uvm_objection.svh(1271) @ 13480000: reporter [TEST_DONE] 'run' phase is ready to proceed to the 'extract' phase
+UVM_INFO tb/uart/uart_scoreboard.svh(136) @ 13480000: uvm_test_top.env.cov [COVERAGE] UART frame instance coverage 0.00%
+UVM_INFO tb/uart/uart_scoreboard.svh(105) @ 13480000: uvm_test_top.env.sb [SB_COUNTS] TX checked=2 RX checked=2 RX observed=3 overflow=0 APB errors=0 reset discarded TX/RX=1/1
+UVM_INFO tb/common/base_env.svh(84) @ 13480000: uvm_test_top [TEST_RESULT] TEST PASSED
+UVM_INFO <UVM_HOME>/src/base/uvm_report_server.svh(847) @ 13480000: reporter [UVM/REPORT/SERVER] 
+--- UVM Report Summary ---
+
+** Report counts by severity
+UVM_INFO :    9
+UVM_WARNING :    0
+UVM_ERROR :    0
+UVM_FATAL :    0
+** Report counts by id
+[COVERAGE]     1
+[NO_DPI_TSTNAME]     1
+[RNTST]     1
+[SB_COUNTS]     1
+[TEST_DONE]     1
+[TEST_RESULT]     1
+[UVM/COMP/NAMECHECK]     1
+[UVM/RELNOTES]     1
+[UVMTOP]     1
+
+- <UVM_HOME>/src/base/uvm_root.svh:517: Verilog $finish
+- S i m u l a t i o n   R e p o r t: Verilator 5.49
+- Verilator: $finish at 13us; walltime 0.180 s; speed 74.938 us/s
+- Verilator: cpu 0.180 s on 1 threads; allocated 30 MB
