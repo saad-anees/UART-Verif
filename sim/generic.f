@@ -4,4 +4,4 @@ tb/common/apb_if.sv
 tb/common/common_pkg.sv
 rtl/demo_regs.sv
 tb/demo/demo_pkg.sv
-tb/demo/demo_top.sv
+tb/demo/generic_demo_tb_top.sv
