@@ -30,13 +30,14 @@ https://www.accellera.org/downloads/standards/uvm .
 
 ## Source organization
 
-Each of the 55 project classes lives in its own class-named `.svh` file.
-For example: `apb_driver.svh`, `uart_scoreboard.svh`, `uart_ctrl_reg.svh`,
-`uart_smoke_vseq.svh` and `uart_smoke_test.svh`. Package `.sv` files contain
+Each of the 55 project classes lives in its own class-named `.sv` file.
+For example: `apb_driver.sv`, `uart_scoreboard.sv`, `uart_ctrl_reg.sv`,
+`uart_smoke_vseq.sv` and `uart_smoke_test.sv`. Package `.sv` files contain
 only imports, constants and includes in dependency order. See the
 [class file map](docs/07_class_file_map.md) for every class and the descriptive
 testbench module filenames. Compile the packages using the supplied file lists;
-`.svh` headers are included, not compiled as independent units.
+Class `.sv` files are included by their package, not compiled twice as standalone units.
+Sequences live under `tb/common/seq_lib/` and `tb/uart/seq_lib/`.
 
 ## What's included
 
