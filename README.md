@@ -37,7 +37,9 @@ only imports, constants and includes in dependency order. See the
 [class file map](docs/07_class_file_map.md) for every class and the descriptive
 testbench module filenames. Compile the packages using the supplied file lists;
 Class `.sv` files are included by their package, not compiled twice as standalone units.
-Sequences live under `tb/common/seq_lib/` and `tb/uart/seq_lib/`.
+Sequences live under `seq_lib/`. Register models and the APB RAL adapter live
+under `ral/`, and all test classes live under `tests/` within their owning
+`tb/common`, `tb/demo` or `tb/uart` directory.
 
 ## What's included
 
