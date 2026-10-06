@@ -28,6 +28,16 @@ factory/configuration switches work in this no-DPI mode.
 The repository does not include a third-party UVM library. Obtain it from
 https://www.accellera.org/downloads/standards/uvm .
 
+## Source organization
+
+Each of the 55 project classes lives in its own class-named `.svh` file.
+For example: `apb_driver.svh`, `uart_scoreboard.svh`, `uart_ctrl_reg.svh`,
+`uart_smoke_vseq.svh` and `uart_smoke_test.svh`. Package `.sv` files contain
+only imports, constants and includes in dependency order. See the
+[class file map](docs/07_class_file_map.md) for every class and the descriptive
+testbench module filenames. Compile the packages using the supplied file lists;
+`.svh` headers are included, not compiled as independent units.
+
 ## What's included
 
 - Reusable APB3 item, sequencer, driver, monitor, active/passive agent, coverage,

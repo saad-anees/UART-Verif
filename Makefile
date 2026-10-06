@@ -83,6 +83,6 @@ VERILATOR ?= verilator
 rtl-check:
 	@mkdir -p build/rtl
 	$(VERILATOR) --binary --timing -Wno-fatal --top-module rtl_smoke \
-	  --Mdir $(ROOT)/build/rtl/obj rtl/uart_apb.sv tb/rtl_smoke.sv > build/rtl/compile.log 2>&1
+	  --Mdir $(ROOT)/build/rtl/obj rtl/uart_apb.sv tb/uart_rtl_smoke_tb.sv > build/rtl/compile.log 2>&1
 	$(ROOT)/build/rtl/obj/Vrtl_smoke | tee build/rtl/run.log
 	@grep -q RTL_TEST_PASSED build/rtl/run.log
