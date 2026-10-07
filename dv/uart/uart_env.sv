@@ -1,5 +1,10 @@
-class uart_env extends base_env;
+class uart_env extends uvm_env;
   `uvm_component_utils(uart_env)
+  apb_agent bus;
+  apb_cfg bus_cfg;
+  apb_reg_adapter adapter;
+  uvm_reg_predictor #(apb_item) predictor;
+  uart_reg_block rm;
   uart_agent serial;
   uart_cfg serial_cfg;
   uart_scoreboard sb;
@@ -8,14 +13,17 @@ class uart_env extends base_env;
   uart_config_tracker tracker;
   uart_virtual_sequencer uart_vsqr;
   function new(string n,uvm_component p); super.new(n,p); endfunction
-  function uvm_reg_block create_register_model();
-    uart_reg_block b=uart_reg_block::type_id::create("rm"); b.build(); return b;
-  endfunction
-  function base_virtual_sequencer create_virtual_sequencer();
-    return uart_virtual_sequencer::type_id::create("vsqr",this);
-  endfunction
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
+    bus_cfg=apb_cfg::type_id::create("bus_cfg");
+    if(!uvm_config_db#(virtual apb_if)::get(this,"","bus_vif",bus_cfg.vif))
+      `uvm_fatal("VIF","Missing bus_vif")
+    uvm_config_db#(apb_cfg)::set(this,"bus","cfg",bus_cfg);
+    bus=apb_agent::type_id::create("bus",this);
+    adapter=apb_reg_adapter::type_id::create("adapter");
+    predictor=uvm_reg_predictor#(apb_item)::type_id::create("predictor",this);
+    rm=uart_reg_block::type_id::create("rm"); rm.build();
+    uart_vsqr=uart_virtual_sequencer::type_id::create("vsqr",this);
     serial_cfg=uart_cfg::type_id::create("serial_cfg");
     if(!uvm_config_db#(virtual uart_if)::get(this,"","uart_vif",serial_cfg.vif))
       `uvm_fatal("VIF","Missing uart_vif")
@@ -28,8 +36,12 @@ class uart_env extends base_env;
   endfunction
   function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
-    if(!$cast(uart_vsqr,vsqr)) `uvm_fatal("CAST","Expected UART virtual sequencer")
-    if(!$cast(uart_vsqr.regs,rm)) `uvm_fatal("CAST","Expected UART register model")
+    rm.default_map.set_sequencer(bus.sqr,adapter);
+    rm.default_map.set_auto_predict(0); // observed APB predictor is the sole mirror path
+    predictor.map=rm.default_map; predictor.adapter=adapter;
+    bus.mon.ap.connect(predictor.bus_in);
+    uart_vsqr.bus_sqr=bus.sqr; uart_vsqr.bus_vif=bus_cfg.vif;
+    uart_vsqr.regs=rm;
     uart_vsqr.serial_sqr=serial.sqr; uart_vsqr.serial_cfg=serial_cfg; uart_vsqr.sb=sb;
     bus.mon.ap.connect(tracker.analysis_export);
     bus.mon.ap.connect(sb.bus_in);

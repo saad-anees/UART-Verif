@@ -2,10 +2,19 @@
 package uart_pkg;
   timeunit 1ns; timeprecision 1ps;
   import uvm_pkg::*;
-  import common_pkg::*;
   `include "uvm_macros.svh"
   localparam bit [15:0] A_CTRL='h00,A_BAUD='h04,A_TX='h08,A_RX='h0c,
     A_STATUS='h10,A_IRQ_EN='h14,A_IRQ_STATUS='h18,A_ERR_CLEAR='h1c;
+
+  // UART-owned APB register-bus agent (dependency order).
+  `include "apb/apb_item.sv"
+  `include "apb/apb_cfg.sv"
+  `include "apb/apb_sequencer.sv"
+  `include "apb/apb_driver.sv"
+  `include "apb/apb_monitor.sv"
+  `include "apb/apb_coverage.sv"
+  `include "apb/apb_agent.sv"
+  `include "ral/apb_reg_adapter.sv"
 
   // Register model (dependency order).
   `include "ral/uart_ctrl_reg.sv"
@@ -37,6 +46,7 @@ package uart_pkg;
   `include "uart_env.sv"
 
   // Sequences (dependency order).
+  `include "seq_lib/apb_access_seq.sv"
   `include "seq_lib/uart_send_seq.sv"
   `include "seq_lib/uart_base_vseq.sv"
   `include "seq_lib/uart_smoke_vseq.sv"
