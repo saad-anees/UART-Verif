@@ -69,25 +69,17 @@ supplementary run. VCS and Questa are the intended paths for the full regression
 and coverage reports.
 
 
-## Current UART-only `dv/` layout — 2026-10-07
+## Self-contained UART/APB branch — 2026-10-07
 
-All 51 UART-related UVM classes and both interfaces live under `dv/`; `tb/`
-contains only the UVM integration top and standalone UART RTL testbench.
-Register models, sequences and tests retain dedicated `ral/`, `seq_lib/` and
-`tests/` directories. The demo sources, generic build and history bundle directory
-were removed. Retained class bodies are unchanged. Package and documentation
-links resolve and the UART-only Makefile commands were checked with `make -C sim -n`.
+This branch has 47 explicit class files. The UART environment now owns APB agent,
+RAL adapter/predictor and register-model wiring directly. `uart_env` derives from
+`uvm_env`, `uart_virtual_sequencer` from `uvm_sequencer`, and `uart_base_test`
+from `uvm_test`. There is no project-specific common package or base-class layer.
+The sole observed-APB RAL prediction path, serial agent, scoreboard and coverage
+connections are retained. The base test retains timeout, topology and pass/fail reporting.
 
-Current semantic compilation passes with zero errors and two upstream UVM
-warnings: [compile log](evidence/dv-uart-static.log). Runtime simulation was not
-repeated for this layout change. The behavioral results above describe earlier
-runs of the same UART RTL and verification logic; older logs may show former paths.
-
-
-## Makefile in `sim/` — 2026-10-07
-
-The Makefile now lives in `sim/Makefile`. Its source and build roots are derived
-from the Makefile location, so `make -C sim` and `make -f sim/Makefile` select
-the same repository sources and output paths. VCS/Questa compile, run, regression,
-coverage and RTL-only commands were checked with dry runs; licensed simulation
-was not rerun. The verification sources on `main` are unchanged.
+Current semantic compilation evidence: [UART/APB compile](evidence/uart-apb-static.log).
+Makefile commands for VCS/Questa and regression were dry-run checked from `sim/`.
+Runtime simulation was not repeated for this branch; earlier behavioral results
+above are from the shared architecture and do not qualify this refactor under
+licensed VCS/Questa. The standard UVM library is still required.

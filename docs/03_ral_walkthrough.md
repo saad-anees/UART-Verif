@@ -29,7 +29,7 @@ flowchart TD
   M --> C["Architectural scoreboard"]
 ```
 
-In `base_env.connect_phase`, `set_sequencer()` binds the map to APB transport,
+In `uart_env.connect_phase`, `set_sequencer()` binds the map to APB transport,
 `set_auto_predict(0)` disables implicit prediction, and `uvm_reg_predictor`
 receives monitored transfers. Do not also enable auto-prediction: that creates
 two prediction paths, which is especially dangerous with side-effect policies.

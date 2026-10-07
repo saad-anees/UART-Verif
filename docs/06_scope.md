@@ -1,16 +1,13 @@
 # Reuse boundaries and known limitations
 
-## Reusable UART verification support
+## UART/APB ownership
 
-`dv/common` contains reusable UVM structure and an APB transport. Other IP
-requires suitable protocol agents, register maps and reference models. The
-ordered comparator is an extension point; UART uses a specialized queue/state checker.
+This `uart-apb` branch contains a self-contained UART environment. APB components
+are under `dv/uart/apb`, the adapter and registers under `ral`, stimulus under
+`seq_lib`, and tests under `tests`. There are no project-specific common base
+classes or common package imports. The standard Accellera UVM library is required.
 
-For another APB peripheral, derive from `base_env`, override the RAL model
-factory method, create a typed virtual sequencer and connect functional
-monitors/model/coverage. For another register bus, replace the APB item/agent and
-adapter/predictor specialization. For out-of-order traffic, match by ID rather
-than reusing an ordered FIFO comparator.
+The `main` branch retains the shared-component architecture for reuse examples.
 
 ## Fixed assumptions in this version
 

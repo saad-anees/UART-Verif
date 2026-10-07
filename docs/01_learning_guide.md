@@ -13,15 +13,16 @@ it, expose it through RXDATA and report errors/interrupts correctly. These are
 observable promises, so the checker should use external interfaces rather than
 copying internal RTL state.
 
-The APB/RAL transport lives in `dv/common`. The UART specialization in
-`dv/uart` derives `uart_env` from `base_env`; the module in `tb/uart_tb_top.sv`
-instantiates the hardware and connects interfaces.
+This branch owns the APB transport and UART verification inside `dv/uart`.
+`uart_env` derives directly from `uvm_env`, `uart_virtual_sequencer` from
+`uvm_sequencer`, and `uart_base_test` from `uvm_test`. The module in
+`tb/uart_tb_top.sv` instantiates hardware and connects the two interfaces.
 
 ## 2. Structural hierarchy
 
 ```mermaid
 flowchart TD
-  T["uart_base_test"] --> E["uart_env : base_env"]
+  T["uart_base_test"] --> E["uart_env : uvm_env"]
   E --> B["APB agent"]
   E --> S["UART agent"]
   E --> V["Virtual sequencer"]
@@ -53,7 +54,7 @@ copying and comparison; they do not implement hardware or drive pins.
 ## 4. Phases and configuration
 
 `build_phase` creates children and retrieves settings. The top sets the APB and
-UART virtual interfaces under `uvm_test_top.env`. `base_env` creates the bus
+UART virtual interfaces under `uvm_test_top.env`. `uart_env` creates the bus
 configuration and passes it to the bus agent. `uart_env` adds the serial agent.
 Missing virtual interfaces are fatal immediately, not a later null-handle crash.
 
