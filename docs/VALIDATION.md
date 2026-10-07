@@ -14,7 +14,7 @@
 | `uart_reset_test` | PASS, TX 2 / RX 2 checked, partial work discarded | `evidence/uart_reset_test.log` |
 | `uart_random_test` | NOT VALIDATED: Verilator internal runtime failure | `evidence/uart_random_test.log` |
 | Log pass/fail gate | PASS, nine synthetic success/failure fixtures | `scripts/test_log_checker.py` |
-| VCS and Questa command expansion | Checked with `make -n` | Makefile |
+| VCS and Questa command expansion | Checked with `make -C sim -n` | Makefile |
 | Actual VCS or Questa compile/simulation | NOT RUN: tools unavailable | No claim of simulator qualification |
 | Commercial functional/code coverage | NOT COLLECTED | No closure percentage claimed |
 
@@ -39,7 +39,7 @@ other issues. Run `uart_random_test` under VCS/Questa before relying on it.
 ```sh
 python3 scripts/static_compile.py --uvm-home /path/to/uvm-1.2
 python3 scripts/test_log_checker.py
-make rtl-check VERILATOR=verilator
+make -C sim rtl-check VERILATOR=verilator
 ```
 
 ## Supplementary UVM command used
@@ -76,9 +76,18 @@ contains only the UVM integration top and standalone UART RTL testbench.
 Register models, sequences and tests retain dedicated `ral/`, `seq_lib/` and
 `tests/` directories. The demo sources, generic build and history bundle directory
 were removed. Retained class bodies are unchanged. Package and documentation
-links resolve and the UART-only Makefile commands were checked with `make -n`.
+links resolve and the UART-only Makefile commands were checked with `make -C sim -n`.
 
 Current semantic compilation passes with zero errors and two upstream UVM
 warnings: [compile log](evidence/dv-uart-static.log). Runtime simulation was not
 repeated for this layout change. The behavioral results above describe earlier
 runs of the same UART RTL and verification logic; older logs may show former paths.
+
+
+## Makefile in `sim/` — 2026-10-07
+
+The Makefile now lives in `sim/Makefile`. Its source and build roots are derived
+from the Makefile location, so `make -C sim` and `make -f sim/Makefile` select
+the same repository sources and output paths. VCS/Questa compile, run, regression,
+coverage and RTL-only commands were checked with dry runs; licensed simulation
+was not rerun. The verification sources on `main` are unchanged.
