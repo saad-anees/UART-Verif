@@ -3,6 +3,13 @@
 An original UART peripheral and an end-to-end UVM 1.2
 environment. VCS is the default simulator; Questa is selectable.
 
+## Branch purpose
+
+`uart-apb` is the self-contained UART/APB branch. All verification code belongs
+under `dv/uart`; there is no `dv/common` package or project base-class layer.
+The `main` branch retains its shared architecture. Both branches use
+`sim/Makefile` with VCS by default and optional Questa.
+
 ## Start here
 
 ```sh
@@ -29,7 +36,7 @@ https://www.accellera.org/downloads/standards/uvm .
 
 ## Source organization
 
-Each of the 51 project classes lives in its own class-named `.sv` file.
+Each of the 47 project classes lives in its own class-named `.sv` file.
 For example: `apb_driver.sv`, `uart_scoreboard.sv`, `uart_ctrl_reg.sv`,
 `uart_smoke_vseq.sv` and `uart_smoke_test.sv`. Package `.sv` files contain
 only imports, constants and includes in dependency order. See the
@@ -38,7 +45,7 @@ testbench module filenames. Compile the packages using the supplied file lists;
 Class `.sv` files are included by their package, not compiled twice as standalone units.
 Sequences live under `seq_lib/`. Register models and the APB RAL adapter live
 under `ral/`, and all test classes live under `tests/` within their owning
-`dv/common` or `dv/uart` directory.
+`dv/uart` directory on this branch.
 
 All verification classes, packages and interfaces are under `dv/`.
 `tb/` contains only `uart_tb_top.sv` and `uart_rtl_smoke_tb.sv`.
@@ -48,7 +55,7 @@ All verification classes, packages and interfaces are under `dv/`.
 
 - Reusable APB3 item, sequencer, driver, monitor, active/passive agent, coverage,
   timeout handling, adapter and observed-transaction RAL predictor.
-- Reusable base environment, virtual sequencer, test and ordered comparator.
+- Direct UART environment, virtual sequencer and base test using standard UVM classes.
 - Synthesizable teaching UART: APB register interface, 8-bit full-duplex data,
   programmable clocks per bit, no/even/odd parity, one/two stop bits, four-byte
   RX FIFO, sticky parity/framing/overrun flags, write-one-to-clear and IRQ masks.
@@ -80,11 +87,11 @@ window and the fixed four-entry scoreboard model.
 | Path | Contents |
 | --- | --- |
 | `rtl/` | UART IP |
-| `dv/common/` | APB agent and reusable UVM support |
+| `dv/uart/apb/` | UART-owned APB register-bus agent |
 | `dv/uart/` | UART agent, environment, scoreboard and coverage |
-| `dv/*/ral/` | Register model and adapter |
-| `dv/*/seq_lib/` | Stimulus and virtual sequences |
-| `dv/*/tests/` | Base and scenario tests |
+| `dv/uart/ral/` | Register model and adapter |
+| `dv/uart/seq_lib/` | Stimulus and virtual sequences |
+| `dv/uart/tests/` | Base and scenario tests |
 | `tb/` | UVM integration top and standalone RTL testbench |
 | `sim/Makefile` | VCS/Questa build, run, regression and coverage |
 | `sim/uart.f` | UART compile order |
