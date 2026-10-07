@@ -6,14 +6,14 @@ environment. VCS is the default simulator; Questa is selectable.
 ## Start here
 
 ```sh
-make                                      # UART smoke, VCS, seed 1
-make TEST=uart_formats_test
-make TEST=uart_random_test SEED=23 PLUSARGS="+N_FRAMES=200"
-make regression                           # seven tests × three seeds
-make coverage                             # VCS URG report
-make SIM=questa UVM_HOME=/tools/uvm-1.2
-make regression SIM=questa UVM_HOME=/tools/uvm-1.2
-make coverage SIM=questa
+make -C sim                                      # UART smoke, VCS, seed 1
+make -C sim TEST=uart_formats_test
+make -C sim TEST=uart_random_test SEED=23 PLUSARGS="+N_FRAMES=200"
+make -C sim regression                           # seven tests × three seeds
+make -C sim coverage                             # VCS URG report
+make -C sim SIM=questa UVM_HOME=/tools/uvm-1.2
+make -C sim regression SIM=questa UVM_HOME=/tools/uvm-1.2
+make -C sim coverage SIM=questa
 ```
 
 Linux, GNU Make, Python 3 and licensed VCS or Questa executables on PATH are
@@ -86,6 +86,7 @@ window and the fixed four-entry scoreboard model.
 | `dv/*/seq_lib/` | Stimulus and virtual sequences |
 | `dv/*/tests/` | Base and scenario tests |
 | `tb/` | UVM integration top and standalone RTL testbench |
+| `sim/Makefile` | VCS/Questa build, run, regression and coverage |
 | `sim/uart.f` | UART compile order |
 | `docs/` | Learning guide, specification and validation evidence |
 
