@@ -83,3 +83,12 @@ Makefile commands for VCS/Questa and regression were dry-run checked from `sim/`
 Runtime simulation was not repeated for this branch; earlier behavioral results
 above are from the shared architecture and do not qualify this refactor under
 licensed VCS/Questa. The standard UVM library is still required.
+
+## Optional Verdi waveform flow
+
+The UART/APB branch adds compile-guarded FSDB dumping and `waves`/`verdi`
+Makefile targets. Default VCS and Questa command generation, enabled VCS
+waveform commands, recursive capture, viewer launch and error paths were
+checked locally. The ordinary UVM 1.2 semantic compile was also rerun.
+VCS and Verdi executables/licenses are unavailable in the authoring environment,
+so actual FSDB generation and GUI viewing have not been run here.
