@@ -34,6 +34,21 @@ factory/configuration switches work in this no-DPI mode.
 The repository does not include a third-party UVM library. Obtain it from
 https://www.accellera.org/downloads/standards/uvm .
 
+## Verdi waveforms
+
+On this branch, capture and inspect UART/APB signals with VCS and Verdi:
+
+```sh
+export VERDI_HOME=/tools/synopsys/verdi
+make -C sim waves TEST=uart_smoke_test SEED=1
+make -C sim verdi TEST=uart_smoke_test SEED=1
+```
+
+Capture writes `build/vcs/uart/uart_smoke_test_seed1/uart.fsdb` and builds a
+Verdi design database. Waveforms are disabled by default. See the
+[Verdi setup and signal inspection guide](docs/05_running.md#verdi-waveform-inspection-vcs)
+for other tests, seeds and installation options.
+
 ## Source organization
 
 Each of the 47 project classes lives in its own class-named `.sv` file.

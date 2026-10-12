@@ -1,6 +1,8 @@
 build/
 __pycache__/
 *.vcd
+*.fsdb
+*.fsdb.*
 *.wlf
 *.vdb/
 *.ucdb
