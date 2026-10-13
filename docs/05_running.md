@@ -20,6 +20,75 @@ part of the SystemVerilog source. `make -C sim coverage` invokes URG across run 
 Site-specific flags can be passed in `VCS_FLAGS`; tools can be overridden with
 `VCS=/path/to/vcs`. License and installation configuration remain site-specific.
 
+## Verdi waveform inspection (VCS)
+
+Use a compatible, licensed VCS/Verdi installation. Set `VERDI_HOME` to the
+Verdi installation root containing `bin/verdi` and `share/PLI`. The Makefile
+exports this variable so VCS can find its native FSDB dumper.
+
+```sh
+export VERDI_HOME=/tools/synopsys/verdi
+make -C sim waves TEST=uart_smoke_test SEED=1
+make -C sim verdi TEST=uart_smoke_test SEED=1
+
+# Capture a different test, then open that exact test/seed.
+make -C sim waves TEST=uart_errors_test SEED=7
+make -C sim verdi TEST=uart_errors_test SEED=7
+
+# Capture with coverage enabled (COV=1 is the default).
+make -C sim waves COV=1 TEST=uart_formats_test SEED=7
+make -C sim coverage
+
+# Capture all regression tests and merge their coverage.
+make -C sim regression WAVES=1 COV=1 SEEDS="1 7 23"
+make -C sim coverage
+
+# Equivalent capture through the normal run target.
+make -C sim run WAVES=1 TEST=uart_random_test SEED=23
+```
+
+`waves` runs VCS with `WAVES=1`: `-kdb` creates the design database and
+`+define+UART_FSDB` enables the guarded dump block in `tb/uart_tb_top.sv`.
+The runtime `+UART_FSDB` switch starts dumping at time zero, including reset.
+`$fsdbDumpvars(0,tb_top,"+all")` captures the DUT and APB/serial interfaces,
+including unpacked arrays such as the RX FIFO. This is signal waveform capture;
+it does not record every UVM class object or transaction automatically.
+
+The default waveform is `build/vcs/uart/<test>_seed<seed>/uart.fsdb`.
+`verdi` loads it with the KDB in `build/vcs/uart/simv.daidir`, using
+`-dbdir` and `-ssf`. It opens existing results and does not compile or run a
+simulation. The design database is shared by VCS runs; open it before rebuilding
+with different RTL or debug options. Repeating a test/seed replaces its waveform.
+
+In Verdi, expand `tb_top` and add these signals to nWave:
+
+| Group | Scope and signals |
+| --- | --- |
+| Clock/reset | `tb_top.clk`, `tb_top.bus.presetn` |
+| APB registers | `tb_top.bus`: `psel`, `penable`, `pwrite`, `paddr`, `pwdata`, `prdata`, `pready`, `pslverr` |
+| UART/interrupt | `tb_top.serial`: `rx`, `tx`, `irq` |
+| Internal state | Expand `tb_top.dut` to inspect TX/RX state, counters and FIFO |
+
+Set APB address/data signals to hexadecimal. Zoom to reset release, then an APB
+setup/access pair or a falling edge on TX/RX. Use cursors to compare bit duration
+against the programmed clocks-per-bit value. The register map is in
+[the UART specification](02_uart_spec.md).
+
+`WAVES=0` is the default. The FSDB block is excluded from ordinary VCS and
+Questa compilation. `WAVES=1 SIM=questa` is rejected explicitly; this FSDB flow
+uses VCS native Verdi integration. Existing Questa waveform debugging remains
+available as described below.
+
+Override the output with `FSDB=/absolute/path/capture.fsdb` on **both** capture
+and viewing commands. `VERDI=/path/to/verdi` and `VERDI_FLAGS` customize the
+viewer. If an older/site-specific VCS installation requires explicit PLI
+linking, use its installed Verdi linking guide and pass the required flags in
+`VCS_FLAGS`. Missing or empty FSDB files fail the capture target; check
+`compile.log`, `run.log`, `VERDI_HOME`, licenses and simulator/Verdi compatibility.
+
+Reference: [Synopsys verification reference methodology cookbook](https://www.synopsys.com/content/dam/synopsys/partners/document/synopsys-verification-reference-methodology-cookbook-for-bluespec-risc-v-processors.pdf),
+which describes the VCS `-kdb`/FSDB/Verdi workflow.
+
 ## Questa
 
 ```sh

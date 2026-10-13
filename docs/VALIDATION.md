@@ -91,3 +91,16 @@ from the Makefile location, so `make -C sim` and `make -f sim/Makefile` select
 the same repository sources and output paths. VCS/Questa compile, run, regression,
 coverage and RTL-only commands were checked with dry runs; licensed simulation
 was not rerun. The verification sources on `main` are unchanged.
+
+## Verdi support on main
+
+The main branch now supports the same optional VCS FSDB capture and Verdi
+waveform viewer as `uart-apb`. The existing common/UART architecture,
+scoreboard, RAL models, tests, functional coverage and compilation file list
+are preserved. Code coverage, URG reports and Questa coverage remain available.
+
+Default VCS/Questa commands, enabled waveform capture, recursive regression
+with coverage and waveforms, coverage merge commands and viewer command
+generation were checked. The ordinary UVM 1.2 semantic compile passed.
+VCS/Verdi executables and licenses are unavailable here, so actual FSDB
+generation, commercial coverage collection and Verdi GUI viewing were not run.
